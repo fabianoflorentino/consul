@@ -20,6 +20,15 @@
     backup: yes
   notify: Start the Consul service
 
+- name: "Ajust Certificates Permission"
+  file:
+    state: directory
+    path: "{{ path_certificate }}"
+    owner: consul
+    group: consul
+    recurse: yes
+    mode: 0644
+
 - name: "Ajust Directory Permission"
   file:
     state: directory
@@ -27,7 +36,9 @@
     owner: consul
     group: consul
     mode: 0755
-  loop: "{{ dir_mount }}"
+  loop:
+    - "{{ data_dir }}"
+    - "{{ path_certificate }}"
 
 - name: Start the Consul service
   service:
