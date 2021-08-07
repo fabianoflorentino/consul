@@ -1,0 +1,32 @@
+---
+cert_path: "/consul/data/certificates/ssl"
+organization_domain_name: "SRE"
+country_domain_name: "BR"
+ca_common_domain_name: "consul.lab.local"
+consul_common_domain_name: "*.consul.lab.local"
+email_domain_address: "support@consul.lab.local"
+ca_subject_alt_name:
+  domain:
+    - "DNS:consul.lab.local"
+consul_subject_alt_name:
+  domain:
+    - "DNS:*.consul.lab.local"
+    - "DNS:consul.lab.local"
+
+attr:
+  registry_common_name: "consul.lab.local"
+  consul_country_name: "BR"
+  consul_state_name: "Sao Paulo"
+  consul_location_name: "Hortolandia"
+  authorityKeyIdentifier: "keyid,issuer"
+  basicConstraints: "CA:FALSE"
+  keyUsage: "digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment"
+  extendedKeyUsage: "extendedKeyUsage = serverAuth"
+  subjectAltName: "@alt_names"
+  alt_names:
+    - DNS.1=consul.lab.local
+  file_name:
+    - consul.lab.local.key
+    - consul.lab.local.csr
+    - consul.lab.local.crt
+    - consul.lab.local.cert

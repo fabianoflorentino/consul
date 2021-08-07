@@ -1,0 +1,20 @@
+---
+dir_mount:
+  - "/consul"
+  - "/consul/data"
+path_mount: "/consul/data"
+
+server: "true"
+datacenter: "dc1"
+data_dir: "/consul/data"
+bind_addr: "0.0.0.0"
+client_addr: "0.0.0.0"
+bootstrap_expect: 3
+retry_join:
+  to_join:
+    - "172.16.252.101"
+    - "172.16.252.102"
+    - "172.16.252.103"
+ui_config_enabled: "true"
+log_level: "DEBUG"
+enable_syslog: "true"

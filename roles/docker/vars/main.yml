@@ -1,0 +1,15 @@
+---
+packages:
+  to_install:
+    - yum-utils
+    - docker-ce
+    - docker-compose
+  to_uninstall:
+    - docker
+    - docker-client
+    - docker-client-latest
+    - docker-common
+    - docker-latest
+    - docker-latest-logrotate
+    - docker-logrotate
+    - docker-engine

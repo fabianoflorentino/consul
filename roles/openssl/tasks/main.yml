@@ -1,0 +1,113 @@
+---
+# Packages for OpenSSL
+- name: Openssl Install and Update
+  yum:
+    name: "{{ item }}"
+    state: latest
+  loop:
+    - openssl
+    - openssl-libs
+
+# Validate Packages
+- name: "Check if OpenSSL is installed"
+  package_facts:
+    manager: "auto"
+
+# Create Directory for Certificates
+- name: Directory to CA
+  ansible.builtin.file:
+    state: directory
+    path: "{{ item }}"
+  loop:
+    - /consul/data/certificates
+    - /consul/data/certificates/ssl
+  when: 
+  - "'openssl' in ansible_facts.packages"
+  - "'openssl-libs' in ansible_facts.packages"
+
+# Create CA Key
+- name: Create CA key
+  community.crypto.openssl_privatekey:
+    path: "{{ cert_path }}/ca.key"
+    size: 2048
+    type: RSA
+  when: 
+  - "'openssl' in ansible_facts.packages"
+  - "'openssl-libs' in ansible_facts.packages"
+
+# Create CSR for CA
+- name: Create CSR for CA Certificate
+  community.crypto.openssl_csr:
+    path: "{{ cert_path }}/ca.csr"
+    privatekey_path: "{{ cert_path }}/ca.key"
+    country_name: "{{ country_domain_name }}"
+    common_name: "{{ ca_common_domain_name }}"
+    organization_name: "{{ organization_domain_name }}"
+    email_address: "{{ email_domain_address }}"
+    subject_alt_name: "{{ item }}"
+  loop: "{{ ca_subject_alt_name.domain }}"
+
+# Certificate CA
+- name: Generate a Self Signed OpenSSL CA Certificate
+  community.crypto.x509_certificate:
+    path: "{{ cert_path }}/ca.crt"
+    privatekey_path: "{{ cert_path }}/ca.key"
+    csr_path: "{{ cert_path }}/ca.csr"
+    provider: selfsigned
+
+
+# consul Certificate
+- name: Verify if Certificate for consul exists
+  stat:
+    path: "{{ cert_path }}/{{ attr.file_name[0] }}"
+  register: file_status
+
+- name: Create Consul key
+  community.crypto.openssl_privatekey:
+    path: "{{ cert_path }}/{{ attr.file_name[0] }}"
+    size: 2048
+    type: RSA
+  when: 
+  - "'openssl' in ansible_facts.packages"
+  - "'openssl-libs' in ansible_facts.packages"
+
+- name: Create CSR file for consul Certificate
+  shell: |
+    cd "{{ cert_path }}"
+    openssl req -sha512 -new \
+      -subj "/C={{ attr.consul_country_name }}/ST={{ attr.consul_state_name }}/L={{ attr.consul_location_name }}/O=Self/OU=SRE/CN={{ attr.registry_common_name }}" \
+      -key "./{{ attr.file_name[0] }}" \
+      -out "./{{ attr.file_name[1] }}"
+  args:
+    executable: /bin/bash
+    creates: "{{ attr.file_name[1] }}"
+  when: file_status.stat.exists == false
+
+- name: Create Request File for Certificate
+  template:
+    src: request.ext.j2
+    dest: "{{ cert_path }}/request.ext"
+  when: file_status.stat.exists == false
+
+- name: Create consul Certificate
+  shell: |
+    cd "{{ cert_path }}"
+    openssl x509 -req -sha512 -days 3650 \
+      -extfile ./request.ext \
+      -CA ./ca.crt -CAkey ./ca.key -CAcreateserial \
+      -in ./{{ attr.file_name[1] }} \
+      -out "./{{ attr.file_name[2] }}"
+  args:
+    executable: /bin/bash
+    creates: "{{ attr.file_name[2] }}"
+  when: file_status.stat.exists == false
+
+- name: Convert CRT to CERT
+  shell: |
+    openssl x509 -inform PEM \
+      -in {{ cert_path }}/{{ attr.file_name[2] }} \
+      -out {{ cert_path }}/{{ attr.file_name[3] }}
+  args:
+    executable: /bin/bash
+    creates: "{{ attr.file_name[3] }}"
+  when: file_status.stat.exists == false

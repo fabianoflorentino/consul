@@ -1,0 +1,32 @@
+---
+- name: Add Docker Repository
+  yum_repository:
+    name: docker
+    description: Docker CE Stable - $basearch
+    baseurl: https://download.docker.com/linux/centos/$releasever/$basearch/stable
+    enabled: yes
+    gpgcheck: yes
+    gpgkey: https://download.docker.com/linux/centos/gpg
+
+- name: Prepare to Docker
+  yum:
+    state: absent
+    name: "{{ item }}"
+  loop: "{{ packages.to_uninstall }} "
+
+- name: Install Docker
+  yum:
+    state: present
+    name: "{{ item }}"
+  loop: "{{ packages.to_install }} "
+
+- name: "Check if Docker is installed"
+  package_facts:
+    manager: "auto"
+
+- name: Docker Service Started and Enabled
+  systemd:
+    name: docker
+    enabled: yes
+    state: started
+  when: "'docker-ce' in ansible_facts.packages"
