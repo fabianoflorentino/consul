@@ -31,6 +31,7 @@
     owner: root
     group: root
     mode: 0755
+    recurse: yes
   loop: "{{ dir_mount }}"
 
 - name: "Mount new directory"
