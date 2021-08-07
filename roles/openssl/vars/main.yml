@@ -1,32 +1,20 @@
 ---
-cert_path: "/consul/data/certificates/ssl"
-organization_domain_name: "SRE"
-country_domain_name: "BR"
-ca_common_domain_name: "consul.lab.local"
-consul_common_domain_name: "*.consul.lab.local"
-email_domain_address: "support@consul.lab.local"
-ca_subject_alt_name:
-  domain:
-    - "DNS:consul.lab.local"
-consul_subject_alt_name:
-  domain:
-    - "DNS:*.consul.lab.local"
-    - "DNS:consul.lab.local"
 
-attr:
-  registry_common_name: "consul.lab.local"
-  consul_country_name: "BR"
-  consul_state_name: "Sao Paulo"
-  consul_location_name: "Hortolandia"
-  authorityKeyIdentifier: "keyid,issuer"
-  basicConstraints: "CA:FALSE"
-  keyUsage: "digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment"
-  extendedKeyUsage: "extendedKeyUsage = serverAuth"
-  subjectAltName: "@alt_names"
-  alt_names:
-    - DNS.1=consul.lab.local
-  file_name:
-    - consul.lab.local.key
-    - consul.lab.local.csr
-    - consul.lab.local.crt
-    - consul.lab.local.cert
+# All
+cert_path: "/consul/data/certificates/ssl"
+
+# CA Configuration
+key_size: 4096
+type_algorithm: "RSA"
+secret_ca_passphrase: "555f9ea62f39918d069c2590a38e49f22af58af2483b156c8b7eeface666b410"
+ca_file_key: "ca.key"
+ca_file_certificate: "ca.pem"
+common_name: "Consul CA"
+
+# Server Configuration
+server_file_key: "server.key"
+server_file_certificate: "server.pem"
+server_subject_alt_name:
+  domain:
+    - "DNS:*.lab.local"
+    - "DNS:server.dc1.consul"
