@@ -1,2 +1,4 @@
 inventories/*
 !inventories/sample
+roles/client/.DS_Store
+keys/known_hosts

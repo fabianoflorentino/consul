@@ -1,0 +1,75 @@
+---
+# Create Directory for Certificates
+- name: Directory to Certificates
+  ansible.builtin.file:
+    state: directory
+    path: "{{ item }}"
+  loop:
+    - /consul/data/certificates
+    - /consul/data/certificates/ssl
+
+- name: Atualizando /etc/hosts
+  lineinfile:
+    path: /etc/hosts
+    line: "{{ hostvars[item]['ansible_host'] }} {{ hostvars[item]['inventory_hostname'] }}"
+  loop: "{{ groups['all'] }}"
+
+- name: Add Hashicorp Repo
+  yum_repository:
+    name: hashicorp
+    description: Hashicorp Stable - $basearch
+    baseurl: https://rpm.releases.hashicorp.com/RHEL/$releasever/$basearch/stable
+    gpgcheck: yes
+    enabled: yes
+    gpgkey: https://rpm.releases.hashicorp.com/gpg
+
+- name: Get stats of the Consul Download
+  package:
+    name: consul
+    state: latest
+
+- name: Copy the Consul configuration file
+  template:
+    src: consul.hcl.j2
+    dest: /etc/consul.d/consul.hcl
+    backup: yes
+  notify: Start the Consul service
+
+- name: Copy client certificate file to host
+  copy:
+    src: "/tmp/{{ item }}"
+    dest: "{{ item }}"
+  loop:
+    - "{{ path_certificate }}/{{ client_file_key }}"
+    - "{{ path_certificate }}/{{ client_file_certificate }}"
+    - "{{ path_certificate }}/{{ ca_file_certificate }}"
+  when:
+    - ("groups['client'][1] == inventory_hostname")
+    - ("groups['client'][2] == inventory_hostname")
+    - ("groups['client'][3] == inventory_hostname")
+
+- name: "Ajust Certificates Permission"
+  file:
+    state: directory
+    path: "{{ path_certificate }}"
+    owner: consul
+    group: consul
+    recurse: yes
+    mode: 0644
+
+- name: "Ajust Directory Permission"
+  file:
+    state: directory
+    path: "{{ item }}"
+    owner: consul
+    group: consul
+    mode: 0755
+  loop:
+    - "{{ data_dir }}"
+    - "{{ path_certificate }}"
+
+- name: Start the Consul service
+  service:
+    name: consul
+    state: started
+    enabled: yes

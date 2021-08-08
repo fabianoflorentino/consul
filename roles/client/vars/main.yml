@@ -1,0 +1,29 @@
+---
+verify_incoming: "true"
+verify_outgoing: "true"
+path_certificate: "/consul/data/certificates/ssl"
+ca_file: "{{ path_certificate }}/ca.pem"
+cert_file: "{{ path_certificate }}/client.pem"
+key_file: "{{ path_certificate }}/client.key"
+server: "false"
+datacenter: "dc1"
+data_dir: "/consul/data"
+bind_addr: "{{ ansible_host }}"
+client_addr: "0.0.0.0"
+bootstrap_expect: 3
+retry_join:
+  to_join:
+    - "{{ groups['all'][0] }}"
+    - "{{ groups['all'][1] }}"
+    - "{{ groups['all'][2] }}"
+log_level: "DEBUG"
+enable_syslog: "true"
+
+# Client Configuration
+ca_file_certificate: "ca.pem"
+client_file_key: "client.key"
+client_file_certificate: "client.pem"
+client_subject_alt_name:
+  domain:
+    - "DNS:*.lab.local"
+    - "DNS:client.dc1.consul"
