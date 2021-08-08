@@ -13,6 +13,5 @@
   roles:
     - {role: disk,    tags: "disk"}
     - {role: common,  tags: "common"}
-    - {role: docker,  tags: "docker"}
     - {role: openssl, tags: "openssl"}
-    - {role: setup,  tags: "setup"}
+    - {role: server,  tags: "server"}
