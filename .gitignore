@@ -1,5 +1,5 @@
 inventories/*
 !inventories/sample
-roles/client/.DS_Store
+*.DS_Store*
 keys/*
 !keys/ssh-keygen.sh
