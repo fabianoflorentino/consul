@@ -18,3 +18,11 @@ server_subject_alt_name:
   domain:
     - "DNS:*.lab.local"
     - "DNS:server.dc1.consul"
+
+# Client Configuration
+client_file_key: "client.key"
+client_file_certificate: "client.pem"
+client_subject_alt_name:
+  domain:
+    - "DNS:*.lab.local"
+    - "DNS:client.dc1.consul"

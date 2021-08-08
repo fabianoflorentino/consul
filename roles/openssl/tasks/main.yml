@@ -97,6 +97,44 @@
   delegate_to: "{{ groups['server'][0] }}"
   run_once: true
 
+
+### client
+- name: Create private key for new certificate on "{{ groups['server'][0] }}"
+  community.crypto.openssl_privatekey:
+    path: "{{ cert_path}}/{{ client_file_key }}"
+  delegate_to: "{{ groups['server'][0] }}"
+  run_once: true
+
+- name: Create certificate signing request (CSR) for new certificate
+  community.crypto.openssl_csr_pipe:
+    privatekey_path: "{{ cert_path}}/{{ client_file_key }}"
+    subject_alt_name:
+      - "{{ client_subject_alt_name.domain[0] }}"
+      - "{{ client_subject_alt_name.domain[1] }}"
+  delegate_to: "{{ groups['server'][0] }}"
+  run_once: true
+  register: client_certificate_csr
+
+- name: Sign certificate with our CA
+  community.crypto.x509_certificate_pipe:
+    csr_content: "{{ client_certificate_csr.csr }}"
+    provider: ownca
+    ownca_path: "{{ cert_path }}/{{ ca_file_certificate }}"
+    ownca_privatekey_path: "{{ cert_path }}/{{ ca_file_key }}"
+    ownca_privatekey_passphrase: "{{ secret_ca_passphrase }}"
+    ownca_not_after: +3650d  # valid for one year
+    ownca_not_before: "-1d"  # valid since yesterday
+  delegate_to: "{{ groups['server'][0] }}"
+  run_once: true
+  register: certificate
+
+- name: Write certificate file on "{{ groups['server'][0] }}"
+  copy:
+    dest: "{{ cert_path }}/{{ client_file_certificate }}"
+    content: "{{ certificate.certificate }}"
+  delegate_to: "{{ groups['server'][0] }}"
+  run_once: true
+
 - name: Fetch certificate file from remote host
   fetch:
     src: "{{ item }}"
@@ -105,10 +143,12 @@
   loop:
     - "{{ cert_path }}/{{ server_file_key }}"
     - "{{ cert_path }}/{{ server_file_certificate }}"
+    - "{{ cert_path }}/{{ client_file_key }}"
+    - "{{ cert_path }}/{{ client_file_certificate }}"
     - "{{ cert_path }}/{{ ca_file_certificate }}"
   delegate_to: "{{ groups['server'][0] }}"
 
-- name: Copy certificate file to host
+- name: Copy server certificate file to hosts
   copy:
     src: "/tmp/{{ item }}"
     dest: "{{ item }}"
