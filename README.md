@@ -4,9 +4,9 @@
 
 Install and configure [Hashicorp Consul](https://www.consul.io/)
 
-- **Consul Cluset in High Availability Mode**
-- **Secure Consul Agent Communication with Encryption and Certificates**
-- **Consul UI for HTTPS**
+- **[Consul Cluster in High Availability Mode](https://learn.hashicorp.com/tutorials/vault/ha-with-consul#step-1-setup-a-consul-server-cluster)**
+- **[Secure Consul Agent Communication with Encryption and Certificates](https://learn.hashicorp.com/tutorials/consul/tls-encryption-openssl-secure)**
+- **[Consul UI for HTTPS](https://learn.hashicorp.com/tutorials/consul/tls-encryption-openssl-secure#configure-the-consul-ui-for-https)**
 
 ## **Requirements**
 
