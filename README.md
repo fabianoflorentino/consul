@@ -2,7 +2,11 @@
 
 ## **Description**
 
-This is a simple ansible project to install and configure [Hashicorp Consul](https://www.consul.io/).
+Install and configure [Hashicorp Consul](https://www.consul.io/)
+
+- **Consul Cluset in High Availability Mode**
+- **Secure Consul Agent Communication with Encryption and Certificates**
+- **Consul UI for HTTPS**
 
 ## **Requirements**
 
