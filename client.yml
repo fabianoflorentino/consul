@@ -11,5 +11,5 @@
           - 'network'
           - 'virtual'
   roles:
-    - {role: disk, tags: "disk"}
+    # - {role: disk, tags: "disk"}
     - {role: client,  tags: "client"}
