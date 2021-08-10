@@ -5,8 +5,8 @@
     state: directory
     path: "{{ item }}"
   loop:
-    - /consul/data/certificates
-    - /consul/data/certificates/ssl
+    - /etc/consul.d/certificates
+    - /etc/consul.d/certificates/ssl
 
 - name: Atualizando /etc/hosts
   lineinfile:
@@ -38,11 +38,11 @@
 - name: Copy client certificate file to host
   copy:
     src: "/tmp/{{ item }}"
-    dest: "{{ item }}"
+    dest: "{{ path_certificate }}"
   loop:
-    - "{{ path_certificate }}/{{ client_file_key }}"
-    - "{{ path_certificate }}/{{ client_file_certificate }}"
-    - "{{ path_certificate }}/{{ ca_file_certificate }}"
+    - "{{ tmp_path_certificates }}/{{ client_file_key }}"
+    - "{{ tmp_path_certificates }}/{{ client_file_certificate }}"
+    - "{{ tmp_path_certificates }}/{{ ca_file_certificate }}"
   when:
     - ("groups['client'][1] == inventory_hostname")
     - ("groups['client'][2] == inventory_hostname")
@@ -65,7 +65,6 @@
     group: consul
     mode: 0755
   loop:
-    - "{{ data_dir }}"
     - "{{ path_certificate }}"
 
 - name: Start the Consul service

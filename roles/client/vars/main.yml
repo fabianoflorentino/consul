@@ -1,13 +1,14 @@
 ---
 verify_incoming: "true"
 verify_outgoing: "true"
-path_certificate: "/consul/data/certificates/ssl"
+path_certificate: "/etc/consul.d/certificates/ssl"
+tmp_path_certificates: "/consul/data/certificates/ssl"
+data_dir: "/etc/consul.d"
 ca_file: "{{ path_certificate }}/ca.pem"
 cert_file: "{{ path_certificate }}/client.pem"
 key_file: "{{ path_certificate }}/client.key"
 server: "false"
 datacenter: "dc1"
-data_dir: "/consul/data"
 bind_addr: "{{ ansible_host }}"
 client_addr: "127.0.0.1"
 bootstrap_expect: 3
