@@ -20,6 +20,12 @@
     backup: yes
   notify: Start the Consul service
 
+- name: Start the Consul service
+  service:
+    name: consul
+    state: started
+    enabled: yes
+
 - name: "Ajust Certificates Permission"
   file:
     state: directory
@@ -39,9 +45,3 @@
   loop:
     - "{{ data_dir }}"
     - "{{ path_certificate }}"
-
-- name: Start the Consul service
-  service:
-    name: consul
-    state: started
-    enabled: yes
