@@ -28,3 +28,4 @@ client_subject_alt_name:
   domain:
     - "DNS:*.lab.local"
     - "DNS:client.dc1.consul"
+    - "DNS:{{ ansible_hostname }}"
