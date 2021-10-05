@@ -1,41 +1,41 @@
-server = {{ server }}
+server           = {{ server }}
 bootstrap_expect = {{ bootstrap_expect }}
 
-log_level = "{{ log_level }}"
+log_level     = "{{ log_level }}"
 enable_syslog = {{ enable_syslog }}
 
-node_name = "{{ inventory_hostname }}"
+node_name  = "{{ inventory_hostname }}"
 datacenter = "{{ region }}"
-data_dir = "{{ data_dir }}"
+data_dir   = "{{ data_dir }}"
 
-bind_addr = "0.0.0.0"
-client_addr = "0.0.0.0"
+bind_addr      = "0.0.0.0"
+client_addr    = "0.0.0.0"
 advertise_addr = "{{ ansible_host }}"
 
 retry_join = [
-    {% for item in groups['server'] %} 
+{% for item in groups['server'] %}
     "{{ hostvars[item]['inventory_hostname'] }}",
-    {%- endfor %}
+{% endfor %}
 ]
 
-verify_incoming_rpc = {{ verify_incoming_rpc }}
-verify_incoming_https = {{ verify_incoming_https }}
-verify_incoming = {{verify_incoming}}
-verify_outgoing = {{ verify_outgoing }}
+verify_incoming_rpc    = {{ verify_incoming_rpc }}
+verify_incoming_https  = {{ verify_incoming_https }}
+verify_incoming        = {{verify_incoming}}
+verify_outgoing        = {{ verify_outgoing }}
 verify_server_hostname = {{ verify_server_hostname }}
 
-ca_file = "{{ ca_file }}"
+ca_file   = "{{ ca_file }}"
 cert_file = "{{ cert_file }}"
-key_file = "{{ key_file }}"
+key_file  = "{{ key_file }}"
 
 enable_script_checks = {{ enable_script_checks }}
-disable_remote_exec = {{ disable_remote_exec }}
+disable_remote_exec  = {{ disable_remote_exec }}
 
 ui_config {
     enabled = {{ ui_config_enabled }}
 }
 
 ports {
-    http = {{ ui_http_port }}
+    http  = {{ ui_http_port }}
     https = {{ ui_https_port }}
 }

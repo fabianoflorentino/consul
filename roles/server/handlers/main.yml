@@ -1,6 +1,14 @@
 ---
 
-- name: Start the Consul service
+- name: Remove Raft and Serf
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - "{{ data_dir }}/raft"
+    - "{{ data_dir }}/serf"
+
+- name: Restart the Consul service
   service:
     name: consul
     state: restarted
