@@ -6,7 +6,7 @@ cert_path: "/consul/data/certificates/ssl"
 # CA Configuration
 key_size: 4096
 type_algorithm: "RSA"
-secret_ca_passphrase: "555f9ea62f39918d069c2590a38e49f22af58af2483b156c8b7eeface666b410"
+secret_ca_passphrase: "SGFzaGljb3JwIENvbnN1bAo"
 ca_file_key: "ca.key"
 ca_file_certificate: "ca.pem"
 common_name: "Consul CA"
@@ -17,8 +17,7 @@ server_file_certificate: "server.pem"
 server_subject_alt_name:
   domain:
     - "DNS:*.lab.local"
-    - "DNS:server.dc1.consul"
-    - "DNS:{{ ansible_hostname }}"
+    - "DNS:server.{{ region }}.consul"
 
 # Client Configuration
 client_file_key: "client.key"
@@ -26,5 +25,4 @@ client_file_certificate: "client.pem"
 client_subject_alt_name:
   domain:
     - "DNS:*.lab.local"
-    - "DNS:client.dc1.consul"
-    - "DNS:{{ ansible_hostname }}"
+    - "DNS:client.{{ region }}.consul"
