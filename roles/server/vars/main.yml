@@ -1,26 +1,29 @@
 ---
+server: "true"
+bootstrap_expect: 3
+
+log_level: "DEBUG"
+enable_syslog: "true"
+
+data_dir: "/consul/data"
+
+bind_addr: "0.0.0.0"
+client_addr: "0.0.0.0"
+
+verify_incoming_rpc: "true"
+verify_incoming_https: "false"
 verify_incoming: "false"
 verify_outgoing: "true"
-verify_server_hostname: "true"
-enable_script_checks: "false"
-disable_remote_exec: "true"
+verify_server_hostname: "false"
+
 path_certificate: "/consul/data/certificates/ssl"
 ca_file: "{{ path_certificate }}/ca.pem"
 cert_file: "{{ path_certificate }}/server.pem"
 key_file: "{{ path_certificate }}/server.key"
-server: "true"
-datacenter: "dc1"
-data_dir: "/consul/data"
-bind_addr: "0.0.0.0"
-client_addr: "0.0.0.0"
-bootstrap_expect: 3
-retry_join:
-  to_join:
-    - "{{ groups['server'][0] }}"
-    - "{{ groups['server'][1] }}"
-    - "{{ groups['server'][2] }}"
+
+enable_script_checks: "false"
+disable_remote_exec: "true"
+
 ui_config_enabled: "true"
 ui_http_port: "8500"
 ui_https_port: "8501"
-log_level: "DEBUG"
-enable_syslog: "true"
