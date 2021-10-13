@@ -1,31 +1,32 @@
 ---
-verify_incoming: "true"
-verify_outgoing: "true"
-path_certificate: "/etc/consul.d/certificates/ssl"
-tmp_path_certificates: "/consul/data/certificates/ssl"
-data_dir: "/etc/consul.d"
-ca_file: "{{ path_certificate }}/ca.pem"
-cert_file: "{{ path_certificate }}/client.pem"
-key_file: "{{ path_certificate }}/client.key"
 server: "false"
-datacenter: "dc1"
-bind_addr: "{{ ansible_host }}"
-client_addr: "127.0.0.1"
-bootstrap_expect: 3
-retry_join:
-  to_join:
-    - "{{ groups['all'][0] }}"
-    - "{{ groups['all'][1] }}"
-    - "{{ groups['all'][2] }}"
+
+
 log_level: "DEBUG"
 enable_syslog: "true"
 
-# Client Configuration
+data_dir: "/etc/consul.d/"
+
+bind_addr: "0.0.0.0"
+client_addr: "0.0.0.0"
+
+verify_incoming_rpc: "true"
+verify_incoming_https: "false"
+verify_incoming: "false"
+verify_outgoing: "true"
+verify_server_hostname: "false"
+
 ca_file_certificate: "ca.pem"
 client_file_key: "client.key"
 client_file_certificate: "client.pem"
-client_subject_alt_name:
-  domain:
-    - "DNS:*.lab.local"
-    - "DNS:client.dc1.consul"
-    - "DNS:{{ ansible_hostname }}"
+
+cert_path: "/consul/data/certificates/ssl"
+tmp_path_certificates: "consul/data/certificates/ssl"
+path_certificate: "/etc/consul.d/certificates/ssl"
+
+ca_file: "{{ path_certificate }}/ca.pem"
+cert_file: "{{ path_certificate }}/client.pem"
+key_file: "{{ path_certificate }}/client.key"
+
+enable_script_checks: "false"
+disable_remote_exec: "true"
