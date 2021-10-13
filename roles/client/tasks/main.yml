@@ -12,7 +12,7 @@
   lineinfile:
     path: /etc/hosts
     line: "{{ hostvars[item]['ansible_host'] }} {{ hostvars[item]['inventory_hostname'] }}"
-  loop: "{{ groups['all'] }}"
+  loop: "{{ groups['server'] }}"
 
 - name: Add Hashicorp Repo
   yum_repository:
@@ -35,6 +35,17 @@
     backup: yes
   notify: Start the Consul service
 
+- name: Fetch client certificate file from server
+  fetch:
+    src: "{{ item }}"
+    dest: "/tmp/{{ item }}"
+    flat: yes
+  loop:
+    - "{{ cert_path }}/{{ client_file_key }}"
+    - "{{ cert_path }}/{{ client_file_certificate }}"
+    - "{{ cert_path }}/{{ ca_file_certificate }}"
+  delegate_to: "{{ groups['server'][0] }}"
+
 - name: Copy client certificate file to host
   copy:
     src: "/tmp/{{ item }}"
@@ -43,10 +54,6 @@
     - "{{ tmp_path_certificates }}/{{ client_file_key }}"
     - "{{ tmp_path_certificates }}/{{ client_file_certificate }}"
     - "{{ tmp_path_certificates }}/{{ ca_file_certificate }}"
-  when:
-    - ("groups['client'][1] == inventory_hostname")
-    - ("groups['client'][2] == inventory_hostname")
-    - ("groups['client'][3] == inventory_hostname")
 
 - name: "Ajust Certificates Permission"
   file:
